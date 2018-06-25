@@ -6,7 +6,7 @@ import (
 
 func main() {
     // declare a variable, by default map will be nil
-	var countryCapitalMap map[string]string
+    var countryCapitalMap map[string]string
     // define the map as nil map can not be assigned any value
 	countryCapitalMap = make(map[string]string)
 

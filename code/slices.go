@@ -20,7 +20,7 @@ func main() {
 
     fmt.Println()
 
-    numbers2 := []int {0, 1, 2, 3, 4, 5, 6, 7, 8}
+    numbers2 := []int{0, 1, 2, 3, 4, 5, 6, 7, 8}
     printSlice(numbers2)
 
     // subslicing
@@ -30,7 +30,7 @@ func main() {
 
     fmt.Println()
 
-    var numbers3 = []int {}
+    var numbers3 = []int{}
     printSlice(numbers3)
 
     // append() increase the capacity of a slice

@@ -26,7 +26,7 @@ func main() {
 
     fmt.Println()
     fmt.Println("Function as value: ")
-    getSquareRoot := func (x float64) float64 {
+    getSquareRoot := func(x float64) float64 {
         return math.Sqrt(x)
     }
     fmt.Println(getSquareRoot(9))
@@ -53,7 +53,6 @@ func swap(x int, y string) (string, int) {
 // Call by value
 func swapcallbyvalue(x, y int) {
     var temp int;
-
     temp = x
     x = y
     y = temp
@@ -62,7 +61,6 @@ func swapcallbyvalue(x, y int) {
 // Call by reference
 func swapcallbyreference(x *int, y *int) {
     var temp int;
-
     temp = *x
     *x = *y
     *y = temp
@@ -81,6 +79,6 @@ type Circle struct {
     x, y, radius float64
 }
 
-func(circle Circle) area() float64 {
+func (circle Circle) area() float64 {
     return math.Pi * circle.radius * circle.radius
 }

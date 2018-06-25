@@ -23,7 +23,7 @@ func factorial(i int) int {
 }
 
 func fibonaci(i int) (ret int) {
-    if i == 0 || i == 1{
+    if i == 0 || i == 1 {
         return i
     }
     return fibonaci(i - 1) + fibonaci(i - 2)
