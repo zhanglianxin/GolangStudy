@@ -56,17 +56,17 @@ func randomWrite2Channel() {
     }
 }
 
-func timeoutHandle() {
+func timeoutHandle(ch chan int) {
     timeout := make(chan bool, 1)
     go func() {
-        time.Sleep(le9)
+        time.Sleep(1e9)
         timeout <- true
     }()
 
     select {
-        case <-ch:
+        case <- ch:
             // 从 ch 中读到数据
-        case <-time:
+        case <- timeout:
             // 一直没有从 ch 中读取到数据，但从 timeout 中读取到了数据
     }
 }
