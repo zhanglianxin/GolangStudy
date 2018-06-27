@@ -34,4 +34,9 @@ func main() {
     }
 
     fmt.Println()
+
+    sl := make([]int, 1)
+    fmt.Printf("%#v\n", sl)
+    sl = sl[1:] // 不会超出边界
+    fmt.Printf("%#v\n", sl)
 }
