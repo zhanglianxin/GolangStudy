@@ -56,6 +56,12 @@ func randomWrite2Channel() {
     }
 }
 
+// 虽然 select 机制不是专为超时而设计的，却能很方便地解决超时问题。
+// 因为 select 的特点是只要其中一个 case 已经完成，
+// 程序就会继续往下执行，而不会考虑其他 case 的情况。
+
+// 使用 select 机制可以避免永久等待的问题，因为程序会在 timeout 中获取到一个
+// 数据后继续执行，无论对 ch 的读取是否还处于等待状态，从而达成 1 秒超时的效果
 func timeoutHandle(ch chan int) {
     timeout := make(chan bool, 1)
     go func() {
