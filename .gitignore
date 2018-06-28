@@ -18,3 +18,5 @@
 pkg/
 
 **/uploads/*
+
+!.gitkeep
