@@ -7,6 +7,7 @@ import (
     "log"
     "os"
     "io/ioutil"
+    "html/template"
 )
 
 func main() {
@@ -25,15 +26,11 @@ const (
 
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
     if r.Method == "GET" {
-        io.WriteString(w, fmt.Sprint(
-            `<!doctype html>
-<html>
-<form method="post" action="/upload" enctype="multipart/form-data">
-    Choose an image to upload: <input name="image" type="file">
-    <input type="submit" value="Upload">
-</form>
-</html>
-`))
+        t, err := template.ParseFiles("upload.html")
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+        }
+        t.Execute(w, nil)
         return
     }
     if r.Method == "POST" {
@@ -93,9 +90,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
     var listHtml string
     for _, fileInfo := range fileInfoArr {
         imgid := fileInfo.Name()
-        listHtml += fmt.Sprintf(`<li>
-<a href="/view?id=%s">%s</a>
-</li>
+        listHtml += fmt.Sprintf(`
 `, imgid, imgid)
     }
     io.WriteString(w, fmt.Sprintf(`<!doctype html><ol>%s</ol></html>`, listHtml))
