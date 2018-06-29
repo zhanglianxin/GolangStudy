@@ -1,7 +1,6 @@
 package main
 
 import (
-    "fmt"
     "net/http"
     "io"
     "log"
@@ -29,6 +28,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
         t, err := template.ParseFiles("upload.html")
         if err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
         }
         t.Execute(w, nil)
         return
@@ -87,11 +87,16 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    var listHtml string
+    locals := make(map[string]interface{})
+    images := []string{}
     for _, fileInfo := range fileInfoArr {
-        imgid := fileInfo.Name()
-        listHtml += fmt.Sprintf(`
-`, imgid, imgid)
+        images = append(images, fileInfo.Name())
     }
-    io.WriteString(w, fmt.Sprintf(`<!doctype html><ol>%s</ol></html>`, listHtml))
+    locals["images"] = images
+    t, err := template.ParseFiles("list.html")
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    t.Execute(w, locals)
 }
