@@ -21,11 +21,12 @@ func main() {
 
 const (
     UPLOAD_DIR = "../uploads"
+    TEMPLATE_DIR = "../views"
 )
 
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
     if r.Method == "GET" {
-        if err := renderHtml(w, "upload", nil); err != nil {
+        if err := renderHtml(w, TEMPLATE_DIR + "/upload", nil); err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)
             return
         }
@@ -90,14 +91,14 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
         images = append(images, fileInfo.Name())
     }
     locals["images"] = images
-    if err = renderHtml(w, "list", locals); err != nil {
+    if err = renderHtml(w, TEMPLATE_DIR + "/list", locals); err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
 }
 
 func renderHtml(w http.ResponseWriter, tmpl string, locals map[string]interface{}) (err error) {
-    t, err = template.ParseFiles(tmpl + ".html")
+    t, err := template.ParseFiles(tmpl + ".html")
     if err != nil {
         return
     }
