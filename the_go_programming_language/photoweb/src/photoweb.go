@@ -8,6 +8,7 @@ import (
     "io/ioutil"
     "html/template"
     "path"
+    "runtime/debug"
 )
 
 const (
@@ -36,9 +37,9 @@ func init() {
 }
 
 func main() {
-    http.HandleFunc("/", listHandler)
-    http.HandleFunc("/upload", uploadHandler)
-    http.HandleFunc("/view", viewHandler)
+    http.HandleFunc("/", safeHandler(listHandler))
+    http.HandleFunc("/upload", safeHandler(uploadHandler))
+    http.HandleFunc("/view", safeHandler(viewHandler))
     err := http.ListenAndServe(":8090", nil)
     if err != nil {
         log.Fatal("LisenAndServe: ", err.Error())
@@ -109,5 +110,22 @@ func renderHtml(w http.ResponseWriter, tmpl string, locals map[string]interface{
 func check(err error) {
     if err != nil {
         panic(err)
+    }
+}
+
+func safeHandler(fn http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        defer func() {
+            if e, ok := recover().(error); ok {
+                http.Error(w, e.Error(), http.StatusInternalServerError)
+                // 或者输出自定义的 50x 错误页面
+                // w.WriteHeader(http.StatusInternalServerError)
+                // renderHtml(w, "error", e.Error())
+
+                log.Println("WARN: panic fired in %v.panic - %v", fn, e)
+                log.Println(string(debug.Stack()))
+            }
+        }()
+        fn(w, r)
     }
 }
