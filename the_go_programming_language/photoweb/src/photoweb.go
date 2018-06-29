@@ -14,6 +14,7 @@ import (
 const (
     UPLOAD_DIR = "../uploads"
     TEMPLATE_DIR = "../views"
+    ListDir = 0x0001
 )
 
 var templates = make(map[string]*template.Template)
@@ -37,10 +38,12 @@ func init() {
 }
 
 func main() {
-    http.HandleFunc("/", safeHandler(listHandler))
-    http.HandleFunc("/upload", safeHandler(uploadHandler))
-    http.HandleFunc("/view", safeHandler(viewHandler))
-    err := http.ListenAndServe(":8090", nil)
+    mux := http.NewServeMux()
+    staticDirHandler(mux, "/assets/", "../public", 0)
+    mux.HandleFunc("/", safeHandler(listHandler))
+    mux.HandleFunc("/upload", safeHandler(uploadHandler))
+    mux.HandleFunc("/view", safeHandler(viewHandler))
+    err := http.ListenAndServe(":8090", mux)
     if err != nil {
         log.Fatal("LisenAndServe: ", err.Error())
     }
@@ -128,4 +131,17 @@ func safeHandler(fn http.HandlerFunc) http.HandlerFunc {
         }()
         fn(w, r)
     }
+}
+
+func staticDirHandler(mux *http.ServeMux, prefix string, staticDir string, flags int) {
+    mux.HandleFunc(prefix, func(w http.ResponseWriter, r *http.Request) {
+        file := staticDir + r.URL.Path[(len(prefix) - 1):]
+        if (flags & ListDir) == 0{
+            if exists := isExists(file); !exists {
+                http.NotFound(w, r)
+                return
+            }
+        }
+        http.ServeFile(w, r, file)
+    })
 }
