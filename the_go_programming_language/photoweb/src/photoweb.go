@@ -25,13 +25,10 @@ const (
 
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
     if r.Method == "GET" {
-        t, err := template.ParseFiles("upload.html")
-        if err != nil {
+        if err := renderHtml(w, "upload", nil); err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)
             return
         }
-        t.Execute(w, nil)
-        return
     }
     if r.Method == "POST" {
         f, h, err := r.FormFile("image")
@@ -93,10 +90,17 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
         images = append(images, fileInfo.Name())
     }
     locals["images"] = images
-    t, err := template.ParseFiles("list.html")
-    if err != nil {
+    if err = renderHtml(w, "list", locals); err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
-    t.Execute(w, locals)
+}
+
+func renderHtml(w http.ResponseWriter, tmpl string, locals map[string]interface{}) (err error) {
+    t, err = template.ParseFiles(tmpl + ".html")
+    if err != nil {
+        return
+    }
+    err = t.Execute(w, locals)
+    return
 }
